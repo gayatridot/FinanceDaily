@@ -34,6 +34,11 @@ export default function FinanceDailyPage() {
   useEffect(() => {
     setIsClient(true);
     
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24);
+    const tipIndex = dayOfYear % dailyFinancialTips.length;
+    const tipForToday = dailyFinancialTips[tipIndex];
+    setCurrentTip(tipForToday);
+
     const storedPoints = localStorage.getItem('totalPoints');
     if (storedPoints) {
       setTotalPoints(JSON.parse(storedPoints));
@@ -42,16 +47,13 @@ export default function FinanceDailyPage() {
     if (storedScores) {
       setQuizScores(JSON.parse(storedScores));
     }
-    const storedSubmittedDate = localStorage.getItem('quizSubmittedDate');
-
-    const today = new Date().toDateString();
-    if (storedSubmittedDate === today) {
-        setQuizSubmitted(true);
-    }
     
-    const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24);
-    const tipIndex = dayOfYear % dailyFinancialTips.length;
-    setCurrentTip(dailyFinancialTips[tipIndex]);
+    const lastSubmittedTipId = localStorage.getItem('lastSubmittedTipId');
+    if (lastSubmittedTipId && parseInt(lastSubmittedTipId, 10) === tipForToday.id) {
+        setQuizSubmitted(true);
+    } else {
+        setQuizSubmitted(false);
+    }
 
   }, []);
 
@@ -92,7 +94,7 @@ export default function FinanceDailyPage() {
 
     localStorage.setItem('totalPoints', JSON.stringify(newPoints));
     localStorage.setItem('quizScores', JSON.stringify(newScores));
-    localStorage.setItem('quizSubmittedDate', new Date().toDateString());
+    localStorage.setItem('lastSubmittedTipId', String(currentTip.id));
 
     setQuizSubmitted(true);
     setSelectedAnswer(null);
