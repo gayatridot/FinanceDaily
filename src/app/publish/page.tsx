@@ -11,6 +11,9 @@ export default function PublishPage() {
               Finance Daily
             </h1>
           </Link>
+          <Link href="/" className="text-sm font-medium text-primary hover:underline">
+            Back to App
+          </Link>
         </div>
       </header>
 
